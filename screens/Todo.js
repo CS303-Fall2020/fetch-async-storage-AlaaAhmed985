@@ -30,6 +30,20 @@ export default function Home ({navigation})  {
         setTodos(item)
     },[])
  
+  
+   const onRefresh = async () => {
+      setLoading(!loading);
+      return fetch("https://jsonplaceholder.typicode.com/todos?userId=1")
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setTodos(responseJson),
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+    }
+   
  const pressHandler2 = id =>{
      setTodos(prevTodos=>{
          return prevTodos.filter(todo =>{
@@ -89,6 +103,8 @@ export default function Home ({navigation})  {
         <View style={styles.contant}>
           <AddTodo submitHandler={submitHandler} />
           <View style={styles.list}>
+            {(loading)? (<ActivityIndicator size="large" color="skyblue"/>)
+            :(
             <FlatList
               data={todos}
               renderItem={({ item }) => (
@@ -98,9 +114,10 @@ export default function Home ({navigation})  {
               
               )}
             />
+            )}
           </View>
         </View>
-        <Button  title='Refresh'  color='skyblue'  />
+        <Button  title='Refresh'  color='skyblue' onPress={onRefresh}  />
       </View>
     </TouchableWithoutFeedback>
   );
